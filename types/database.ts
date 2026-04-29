@@ -109,7 +109,11 @@ export interface Truck {
   id: string;
   plate_id: string;
   vin: string;
+  model: string;
+  year?: number;
   status: string;
+  last_maintenance_date?: string;
+  next_maintenance_date?: string;
   last_lat?: number;
   last_lng?: number;
   created_at?: string;
@@ -120,7 +124,12 @@ export interface Trailer {
   id: string;
   plate_id: string;
   vin: string;
+  model: string;
+  year?: number;
+  capacity_tons?: number;
   status: string;
+  last_maintenance_date?: string;
+  next_maintenance_date?: string;
   last_lat?: number;
   last_lng?: number;
   created_at?: string;
