@@ -83,25 +83,49 @@ export default function DriverManagement() {
 
   const handleStatusChange = async (driverId: string, newStatus: string) => {
     try {
-      await fetch('/api/drivers', {
+      // Optimistic update
+      setDrivers(prev => prev.map(d => 
+        d.id === driverId ? { ...d, status: newStatus as any } : d
+      ));
+
+      const response = await fetch('/api/drivers', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: driverId, status: newStatus }),
       });
+
+      if (!response.ok) {
+        // Revert on error
+        fetchData();
+      }
     } catch (error) {
       console.error('Error updating driver status:', error);
+      // Revert on error
+      fetchData();
     }
   };
 
   const handleAssignTruck = async (driverId: string, truckId: string) => {
     try {
-      await fetch('/api/drivers', {
+      // Optimistic update
+      setDrivers(prev => prev.map(d => 
+        d.id === driverId ? { ...d, assigned_truck_id: truckId || undefined } : d
+      ));
+
+      const response = await fetch('/api/drivers', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: driverId, assigned_truck_id: truckId || null }),
       });
+
+      if (!response.ok) {
+        // Revert on error
+        fetchData();
+      }
     } catch (error) {
       console.error('Error assigning truck:', error);
+      // Revert on error
+      fetchData();
     }
   };
 
@@ -184,11 +208,21 @@ export default function DriverManagement() {
                 className="w-full text-sm border border-gray-300 rounded px-3 py-1.5"
               >
                 <option value="">Not Assigned</option>
-                {trucks.map((truck) => (
-                  <option key={truck.id} value={truck.id}>
-                    {truck.plate_id} ({truck.status})
-                  </option>
-                ))}
+                {trucks
+                  .filter((truck) => {
+                    // Show only trucks that are:
+                    // 1. Not assigned to any driver, OR
+                    // 2. Assigned to this specific driver
+                    const assignedToAnotherDriver = drivers.some(
+                      (d) => d.id !== driver.id && d.assigned_truck_id === truck.id
+                    );
+                    return !assignedToAnotherDriver;
+                  })
+                  .map((truck) => (
+                    <option key={truck.id} value={truck.id}>
+                      {truck.plate_id} ({truck.status})
+                    </option>
+                  ))}
               </select>
             </div>
           </div>

@@ -168,6 +168,9 @@ export default function Map() {
     const fetchShipments = async () => {
       try {
         const response = await fetch('/api/shipments');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const result = await response.json();
         if (result.success) {
           setShipments(result.data);
@@ -241,12 +244,18 @@ export default function Map() {
     const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
     const type = Math.random() > 0.5 ? 'Truck' : 'Trailer';
     
-    // Optimistic UI update could be added here
-    await fetch('/api/markers', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lat, lng, name: `${type} ${Math.floor(Math.random() * 1000)}`, status: randomStatus }),
-    });
+    try {
+      const response = await fetch('/api/markers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lat, lng, name: `${type} ${Math.floor(Math.random() * 1000)}`, status: randomStatus }),
+      });
+      if (!response.ok) {
+        console.error('Failed to create marker:', response.status);
+      }
+    } catch (error) {
+      console.error('Error creating marker:', error);
+    }
   };
 
   const handleWarehouseClick = (lat: number, lng: number) => {

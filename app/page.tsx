@@ -9,85 +9,101 @@ import TruckManagement from '@/components/TruckManagement';
 import ShipmentTracking from '@/components/ShipmentTracking';
 import NotificationsPanel from '@/components/NotificationsPanel';
 import DispatchModal from '@/components/DispatchModal';
+import { LayoutDashboard, Map, Package, User, Truck, Bell, Plus, LogOut } from 'lucide-react';
+import { supabase } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
 
 type ViewMode = 'map' | 'dashboard' | 'drivers' | 'trucks' | 'shipments' | 'notifications';
 
 export default function Home() {
   const [viewMode, setViewMode] = useState<ViewMode>('map');
   const [showDispatchModal, setShowDispatchModal] = useState(false);
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
+  };
 
   return (
-    <main className="flex h-screen w-full overflow-hidden bg-slate-50">
+    <main className="flex h-screen w-full overflow-hidden bg-gray-50">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main Content Area */}
       <div className="flex-1 h-full flex flex-col">
         {/* Top Navigation Bar */}
-        <div className="bg-white border-b border-gray-200 shadow-sm z-10">
+        <div className="bg-white border-b border-gray-200 z-10">
           <div className="flex items-center justify-between px-6 py-3">
             <div className="flex items-center gap-4">
-              <h1 className="text-xl font-bold text-slate-800">Mindanao Logistics Dashboard</h1>
+              <h1 className="text-xl font-semibold text-gray-900">Mindanao Logistics Dashboard</h1>
               <div className="hidden md:flex gap-2">
                 <button
                   onClick={() => setViewMode('dashboard')}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+                  className={`px-4 py-2 rounded text-sm font-medium transition flex items-center gap-2 ${
                     viewMode === 'dashboard'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                 >
-                  📊 Dashboard
+                  <LayoutDashboard size={16} />
+                  <span>Dashboard</span>
                 </button>
                 <button
                   onClick={() => setViewMode('map')}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+                  className={`px-4 py-2 rounded text-sm font-medium transition flex items-center gap-2 ${
                     viewMode === 'map'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                 >
-                  🗺️ Map View
+                  <Map size={16} />
+                  <span>Map View</span>
                 </button>
                 <button
                   onClick={() => setViewMode('shipments')}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+                  className={`px-4 py-2 rounded text-sm font-medium transition flex items-center gap-2 ${
                     viewMode === 'shipments'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                 >
-                  📦 Shipments
+                  <Package size={16} />
+                  <span>Shipments</span>
                 </button>
                 <button
                   onClick={() => setViewMode('drivers')}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+                  className={`px-4 py-2 rounded text-sm font-medium transition flex items-center gap-2 ${
                     viewMode === 'drivers'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                 >
-                  👤 Drivers
+                  <User size={16} />
+                  <span>Drivers</span>
                 </button>
                 <button
                   onClick={() => setViewMode('trucks')}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+                  className={`px-4 py-2 rounded text-sm font-medium transition flex items-center gap-2 ${
                     viewMode === 'trucks'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                 >
-                  🚛 Trucks
+                  <Truck size={16} />
+                  <span>Trucks</span>
                 </button>
                 <button
                   onClick={() => setViewMode('notifications')}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+                  className={`px-4 py-2 rounded text-sm font-medium transition flex items-center gap-2 ${
                     viewMode === 'notifications'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                   }`}
                 >
-                  🔔 Alerts
+                  <Bell size={16} />
+                  <span>Alerts</span>
                 </button>
               </div>
             </div>
@@ -96,9 +112,17 @@ export default function Home() {
             <div className="flex gap-2">
               <button
                 onClick={() => setShowDispatchModal(true)}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold text-sm"
+                className="px-4 py-2 bg-gray-900 text-white rounded text-sm font-medium hover:bg-gray-800 transition flex items-center gap-2"
               >
-                + New Dispatch
+                <Plus size={16} />
+                <span>New Dispatch</span>
+              </button>
+              <button
+                onClick={handleSignOut}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded text-sm font-medium hover:bg-gray-100 transition flex items-center gap-2"
+              >
+                <LogOut size={16} />
+                <span>Sign Out</span>
               </button>
             </div>
           </div>

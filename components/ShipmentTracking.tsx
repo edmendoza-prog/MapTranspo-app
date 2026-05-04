@@ -36,10 +36,15 @@ export default function ShipmentTracking() {
   const fetchShipments = async () => {
     try {
       const response = await fetch('/api/shipments');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const result = await response.json();
       if (result.success) {
         setShipments(result.data);
       }
+    } catch (error) {
+      console.error('Error fetching shipments:', error);
     } finally {
       setLoading(false);
     }
@@ -47,13 +52,25 @@ export default function ShipmentTracking() {
 
   const handleStatusChange = async (shipmentId: string, newStatus: string) => {
     try {
-      await fetch('/api/shipments', {
+      // Optimistic update
+      setShipments(prev => prev.map(s => 
+        s.id === shipmentId ? { ...s, status: newStatus as any } : s
+      ));
+
+      const response = await fetch('/api/shipments', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: shipmentId, status: newStatus }),
       });
+
+      if (!response.ok) {
+        // Revert on error
+        fetchShipments();
+      }
     } catch (error) {
       console.error('Error updating shipment status:', error);
+      // Revert on error
+      fetchShipments();
     }
   };
 

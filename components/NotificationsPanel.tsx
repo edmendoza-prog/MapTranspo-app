@@ -39,6 +39,9 @@ export default function NotificationsPanel() {
   const fetchNotifications = async () => {
     try {
       const response = await fetch('/api/notifications');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const result = await response.json();
       if (result.success) {
         setNotifications(result.data);

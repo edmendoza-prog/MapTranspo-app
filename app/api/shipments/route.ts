@@ -76,11 +76,18 @@ export async function POST(request: Request) {
 
     if (error) throw error;
 
-    // Update driver status to assigned if driver_id provided
+    // Update driver status to assigned and automatically assign truck
     if (driver_id) {
+      const driverUpdate: any = { status: 'assigned' };
+      
+      // Automatically assign truck to driver if truck_id is provided
+      if (truck_id) {
+        driverUpdate.assigned_truck_id = truck_id;
+      }
+      
       await supabase
         .from('drivers')
-        .update({ status: 'assigned' })
+        .update(driverUpdate)
         .eq('id', driver_id);
     }
 
@@ -148,11 +155,14 @@ export async function PATCH(request: Request) {
       
       // Release resources when shipment is delivered
       if (currentShipment && status === 'delivered') {
-        // Release driver
+        // Release driver and clear assigned truck
         if (currentShipment.driver_id) {
           await supabase
             .from('drivers')
-            .update({ status: 'available' })
+            .update({ 
+              status: 'available',
+              assigned_truck_id: null 
+            })
             .eq('id', currentShipment.driver_id);
         }
         

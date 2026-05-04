@@ -84,6 +84,9 @@ export default function DispatchModal({ isOpen, onClose }: DispatchModalProps) {
             destination_warehouse_id: formData.destination_warehouse_id,
           }),
         });
+        if (!routeResponse.ok) {
+          throw new Error(`Failed to create route: ${routeResponse.status}`);
+        }
         const routeResult = await routeResponse.json();
         if (routeResult.success && routeResult.data) {
           routeId = routeResult.data[0].id;
