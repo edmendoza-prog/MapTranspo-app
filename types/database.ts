@@ -135,20 +135,3 @@ export interface Trailer {
   created_at?: string;
   updated_at?: string;
 }
-
-export type MaintenanceStatus = 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
-
-export interface MaintenanceLog {
-  id: string;
-  truck_id?: string;
-  trailer_id?: string;
-  maintenance_type: string;
-  description?: string;
-  cost_php?: number;
-  scheduled_date?: string;
-  completed_date?: string;
-  status: MaintenanceStatus;
-  next_maintenance_date?: string;
-  created_at: string;
-  updated_at: string;
-}

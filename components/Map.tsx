@@ -251,7 +251,8 @@ export default function Map() {
         body: JSON.stringify({ lat, lng, name: `${type} ${Math.floor(Math.random() * 1000)}`, status: randomStatus }),
       });
       if (!response.ok) {
-        console.error('Failed to create marker:', response.status);
+        const errorData = await response.json();
+        console.error('Failed to create marker:', response.status, errorData);
       }
     } catch (error) {
       console.error('Error creating marker:', error);
@@ -300,12 +301,12 @@ export default function Map() {
             position={[warehouse.lat, warehouse.lng]}
             icon={warehouse.is_main_hub ? L.divIcon({
               className: 'bg-transparent',
-              html: `<div style="background-color: #8b0000; width: 32px; height: 32px; display: flex; align-items: center; justify-center; border-radius: 6px; border: 3px solid gold; box-shadow: 0 0 10px rgba(139,0,0,0.8);"><svg fill="gold" viewBox="0 0 24 24" style="width: 18px;"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg></div>`,
+              html: `<div style="background-color: #8b0000; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: 3px solid gold; box-shadow: 0 0 10px rgba(139,0,0,0.8);"><svg fill="gold" viewBox="0 0 24 24" style="width: 18px;"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg></div>`,
               iconSize: [32, 32],
               iconAnchor: [16, 16],
             }) : L.divIcon({
               className: 'bg-transparent',
-              html: `<div style="background-color: #4b5563; width: 24px; height: 24px; display: flex; align-items: center; justify-center; border-radius: 4px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.5);"><svg fill="white" viewBox="0 0 24 24" style="width: 14px;"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg></div>`,
+              html: `<div style="background-color: #4b5563; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.5);"><svg fill="white" viewBox="0 0 24 24" style="width: 14px;"><path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2z"/></svg></div>`,
               iconSize: [24, 24],
               iconAnchor: [12, 12],
             })}

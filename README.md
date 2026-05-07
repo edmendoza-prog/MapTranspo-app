@@ -21,7 +21,6 @@ A comprehensive web-based logistics management system for dispatching, tracking,
 ### Fleet Management
 - **Vehicle Registry**: Complete truck and trailer database
 - **Real-time Status**: Track availability and assignments
-- **Maintenance Tracking**: Schedule and log maintenance activities
 - **Fleet Statistics**: Quick overview of total vehicles and availability
 
 ### Driver Management
@@ -143,7 +142,6 @@ The system uses the following main tables:
 - `route_waypoints` - Intermediate stops on routes
 - `shipments` - Active shipment tracking
 - `notifications` - Alert and notification system
-- `maintenance_logs` - Vehicle maintenance tracking
 - `markers` - Real-time vehicle positions
 
 All tables have Row Level Security (RLS) enabled and real-time subscriptions configured.

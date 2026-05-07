@@ -131,7 +131,6 @@ A **complete, production-ready logistics management system** for tracking and ma
 - ✅ **route_waypoints** - Intermediate stops
 - ✅ **shipments** - Active shipment tracking
 - ✅ **notifications** - Alert system
-- ✅ **maintenance_logs** - Vehicle maintenance tracking
 - ✅ **markers** - Real-time vehicle positions (existing)
 
 ### Features Added

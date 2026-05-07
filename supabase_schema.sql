@@ -140,22 +140,6 @@ CREATE TABLE IF NOT EXISTS notifications (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create maintenance_logs table for vehicle maintenance tracking
-CREATE TABLE IF NOT EXISTS maintenance_logs (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  truck_id UUID REFERENCES trucks(id),
-  trailer_id UUID REFERENCES trailers(id),
-  maintenance_type VARCHAR(100) NOT NULL,
-  description TEXT,
-  cost_php DECIMAL(10, 2),
-  scheduled_date DATE,
-  completed_date DATE,
-  status VARCHAR(50) DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'in-progress', 'completed', 'cancelled')),
-  next_maintenance_date DATE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
 -- Create indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_warehouses_main_hub ON warehouses(is_main_hub);
 CREATE INDEX IF NOT EXISTS idx_trucks_status ON trucks(status);
@@ -197,9 +181,6 @@ CREATE TRIGGER update_routes_updated_at BEFORE UPDATE ON routes
 CREATE TRIGGER update_shipments_updated_at BEFORE UPDATE ON shipments
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_maintenance_logs_updated_at BEFORE UPDATE ON maintenance_logs
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 -- Enable Row Level Security (RLS) - Configure based on your auth requirements
 ALTER TABLE warehouses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE trucks ENABLE ROW LEVEL SECURITY;
@@ -210,7 +191,6 @@ ALTER TABLE routes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE route_waypoints ENABLE ROW LEVEL SECURITY;
 ALTER TABLE shipments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
-ALTER TABLE maintenance_logs ENABLE ROW LEVEL SECURITY;
 
 -- Create permissive policies (adjust based on your authentication needs)
 CREATE POLICY "Enable all operations for authenticated users" ON warehouses FOR ALL USING (true);
@@ -223,7 +203,6 @@ CREATE POLICY "Enable all operations for authenticated users" ON route_waypoints
 CREATE POLICY "Enable all operations for authenticated users" ON shipments FOR ALL USING (true);
 CREATE POLICY "Enable all operations for authenticated users" ON notifications FOR ALL USING (true);
 CREATE POLICY "Enable all operations for authenticated users" ON maintenance_logs FOR ALL USING (true);
-
 -- Insert sample data for testing
 
 -- Sample warehouses (Mindanao locations)

@@ -9,6 +9,20 @@ interface DispatchModalProps {
   onClose: () => void;
 }
 
+// Cargo type mapping
+const cargoTypeMapping: Record<string, string[]> = {
+  'Food Items': ['Apple', 'Banana', 'Orange', 'Rice', 'Wheat', 'Meat', 'Dairy Products', 'Canned Goods', 'Beverages', 'Other'],
+  'Electronics': ['Smartphones', 'Laptops', 'Tablets', 'TVs', 'Computer Parts', 'Appliances', 'Audio Equipment', 'Cameras', 'Other'],
+  'Construction Materials': ['Cement', 'Steel Bars', 'Wood', 'Sand', 'Gravel', 'Bricks', 'Tiles', 'Paint', 'Pipes', 'Other'],
+  'Pharmaceuticals': ['Medicine', 'Medical Equipment', 'Vaccines', 'Surgical Supplies', 'First Aid Kits', 'Other'],
+  'Textiles/Clothing': ['Shirts', 'Pants', 'Dresses', 'Fabrics', 'Shoes', 'Accessories', 'Other'],
+  'Chemicals': ['Industrial Chemicals', 'Cleaning Supplies', 'Fertilizers', 'Pesticides', 'Other'],
+  'Automotive Parts': ['Tires', 'Batteries', 'Engine Parts', 'Brakes', 'Filters', 'Other'],
+  'Furniture': ['Chairs', 'Tables', 'Beds', 'Cabinets', 'Sofas', 'Office Furniture', 'Other'],
+  'Perishable Goods': ['Fresh Vegetables', 'Fresh Fruits', 'Frozen Foods', 'Flowers', 'Other'],
+  'General Merchandise': ['Books', 'Toys', 'Sports Equipment', 'Tools', 'Other'],
+};
+
 export default function DispatchModal({ isOpen, onClose }: DispatchModalProps) {
   const [step, setStep] = useState(1); // 1: Route, 2: Assignment, 3: Cargo Details
   const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -17,6 +31,8 @@ export default function DispatchModal({ isOpen, onClose }: DispatchModalProps) {
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [routes, setRoutes] = useState<Route[]>([]);
   const [loading, setLoading] = useState(false);
+  const [cargoCategory, setCargoCategory] = useState('');
+  const [cargoSpecificItem, setCargoSpecificItem] = useState('');
 
   const [formData, setFormData] = useState({
     // Route selection or creation
@@ -117,6 +133,8 @@ export default function DispatchModal({ isOpen, onClose }: DispatchModalProps) {
         onClose();
         // Reset form
         setStep(1);
+        setCargoCategory('');
+        setCargoSpecificItem('');
         setFormData({
           route_id: '',
           new_route_name: '',
@@ -323,15 +341,50 @@ export default function DispatchModal({ isOpen, onClose }: DispatchModalProps) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Cargo Description</label>
-                <textarea
-                  value={formData.cargo_description}
-                  onChange={(e) => setFormData({ ...formData, cargo_description: e.target.value })}
-                  placeholder="e.g., Electronics, Food items, Construction materials"
+                <label className="block text-sm font-medium mb-1">Cargo Category</label>
+                <select
+                  value={cargoCategory}
+                  onChange={(e) => {
+                    setCargoCategory(e.target.value);
+                    setCargoSpecificItem('');
+                    setFormData({ ...formData, cargo_description: '' });
+                  }}
                   className="w-full border border-gray-300 rounded px-3 py-2"
-                  rows={2}
-                />
+                >
+                  <option value="">Select Cargo Category</option>
+                  <option value="Food Items">Food Items</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Construction Materials">Construction Materials</option>
+                  <option value="Pharmaceuticals">Pharmaceuticals</option>
+                  <option value="Textiles/Clothing">Textiles/Clothing</option>
+                  <option value="Chemicals">Chemicals</option>
+                  <option value="Automotive Parts">Automotive Parts</option>
+                  <option value="Furniture">Furniture</option>
+                  <option value="Perishable Goods">Perishable Goods</option>
+                  <option value="General Merchandise">General Merchandise</option>
+                </select>
               </div>
+
+              {cargoCategory && (
+                <div>
+                  <label className="block text-sm font-medium mb-1">Specific Item</label>
+                  <select
+                    value={cargoSpecificItem}
+                    onChange={(e) => {
+                      setCargoSpecificItem(e.target.value);
+                      setFormData({ ...formData, cargo_description: `${cargoCategory} - ${e.target.value}` });
+                    }}
+                    className="w-full border border-gray-300 rounded px-3 py-2"
+                  >
+                    <option value="">Select Specific Item</option>
+                    {cargoTypeMapping[cargoCategory]?.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
